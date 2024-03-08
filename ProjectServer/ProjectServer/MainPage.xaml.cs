@@ -29,7 +29,8 @@ namespace ProjectServer
         {
             if(PBox.Password.ToString() == "1234")
             {
-
+                Uri uri = new Uri("/ControlPage.xaml", UriKind.Relative);
+                NavigationService.Navigate(uri);
             }
         }
     }
