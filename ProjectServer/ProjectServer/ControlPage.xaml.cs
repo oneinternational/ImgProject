@@ -16,6 +16,8 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.ComponentModel;
+using System.IO;
 
 
 namespace ProjectServer
@@ -27,11 +29,9 @@ namespace ProjectServer
     public partial class ControlPage : Page
     {
         private string bindIP = "10.10.20.106";
-        private const int bindPort = 33224;
+        private const int bindPort = 3323;
         private TcpListener server = null;
         private IPEndPoint localAddress;
-
-      
 
         //접속자 스트림
         List<NetworkStream> streamList = new List<NetworkStream>();
@@ -52,92 +52,123 @@ namespace ProjectServer
         {
             public string Item { get; set; }
             public string Time { get; set; }
-            public string NumberOfLine { get; set; }
-            public string NameOfDirector { get; set; }
+            public string Line { get; set; }
+            public string Director { get; set; }
             public string Note { get; set; }
         }
 
-        private void HandleDataFromClients(object stm9)
+        private void HandleDataFromClients()
         {
-            NetworkStream stm1 = (NetworkStream)stm9;
             int length;
             string dataMessage = null;
             byte[] messageBuffer = new byte[256];
+            TcpClient client = server.AcceptTcpClient();
+            NetworkStream stream = client.GetStream();
             
-            while((length = stm1.Read(messageBuffer, 0, messageBuffer.Length))!=0)
+            while ((length = stream.Read(messageBuffer, 0, messageBuffer.Length)) != 0)//클라 접속 끊겼을 때 예외처리 하기
             {
+           
+                MessageBox.Show("dd");
                 dataMessage = Encoding.Default.GetString(messageBuffer, 0, length);
-                Console.WriteLine("받은 메시지 : {0}", dataMessage);
-                string[] messageSplit = dataMessage.Split(new string[] { "/" }, StringSplitOptions.None);
+                MessageBox.Show("받은 메시지 : " + dataMessage);
+                string[] messageSplit = new string[1024];
+                System.Array.Clear(messageSplit, 0, messageSplit.Length);
+                messageSplit = dataMessage.Split(new string[] { "/" }, StringSplitOptions.None);
+                //-----------------------------------------
+
+                //FileStream fileStr;
+                //BinaryWriter writer;
+                //byte[] size = new byte[4];
+                //int strLen , len, recvLen;
+                //byte[] data = new byte[10000];
+                //List<byte> bufList = new List<byte>();
+                //---------------------------------------
+                FileStream fileStr;
+                byte[] size = new byte[1024];
+                int fileLength;
+                byte[] buffer = new byte[1024];
+                int totalLength = 0;
+
 
                 int caseNumber = int.Parse(messageSplit[0]);
 
-                switch(caseNumber)
+                switch (caseNumber)
                 {
-                case 2:
-                        passItems.Add(new PassData() { Item = messageSplit[1], Time = messageSplit[2], NumberOfLine = messageSplit[3], NameOfDirector = messageSplit[4], Note = messageSplit[5] });
-                        PassList.ItemsSource = passItems;
-                    break;
+                    case 1:
+                        MessageBox.Show("Entry protocol does match");
+                        break;
 
-                    
+                    case 2:
+                        MessageBox.Show("여기냥");
+                        //passItems.Insert(passItems.Count, new PassData() { Item = messageSplit[1], Time = messageSplit[2], Line = messageSplit[3], Director = messageSplit[4], Note = messageSplit[5] });
+                        passItems.Add(new PassData() { Item = messageSplit[1], Time = messageSplit[2], Line = messageSplit[3], Director = messageSplit[4], Note = messageSplit[5] });
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            PassList.ItemsSource = passItems;
+                        });
+                        break;
+
+
+                    case 4:
+                        //-------------------------------------------------
+
+                        stream.Read(size, 0, size.Length);
+                        fileLength = BitConverter.ToInt32(size, 0);
+                        
+                        MessageBox.Show("데이터 수신:" + fileLength.ToString());
+
+                        fileStr = new FileStream("acx", FileMode.Create,FileAccess.Write);
+                       
+
+                        do
+                        {
+                            int receiveLength = stream.Read(buffer, 0, buffer.Length);
+                            fileStr.Write(buffer, 0, receiveLength);
+                            totalLength += receiveLength;
+                            //MessageBox.Show("받은 데이터 : " + totalLength.ToString());
+                        }
+                        while (stream.DataAvailable);
+                        
+
+
+
+                        MessageBox.Show("이미지 파일 수신 완료");
+                        //----------------------------------------------------
+                        break;
                 }
+                System.Array.Clear(messageBuffer, 0, messageBuffer.Length);
             }
- 
-                
         }
 
         private void HandleEntranceOfClients()
         {
+            string message = "1/";
+            byte[] sendMessage = new byte[256];
             while (true)
             {
-                MessageBox.Show("진짜");
+                MessageBox.Show("Waiting for clients");
                 TcpClient client = server.AcceptTcpClient();
-                MessageBox.Show("들어왔다.");
                 lock (firstLock)
                 {
-                    while (clientCount > 0 || secondLock == true)// init에는 client 0 왼쪽 조건 x false 실행 x secondLock = 0 false 실행 x
+                    while (secondLock == true)// init에는 client 0 왼쪽 조건 x false 실행 x secondLock = 0 false 실행 x
                         Monitor.Wait(firstLock);
 
                     secondLock = true;
 
-                    Console.WriteLine("클라이언트 접속 : {0}", ((IPEndPoint)client.Client.RemoteEndPoint).ToString());
+                    MessageBox.Show("클라이언트 접속 : " + ((IPEndPoint)client.Client.RemoteEndPoint).ToString());
                     clientCount += 1;
                     NetworkStream stream = client.GetStream();
+
+                    sendMessage = System.Text.Encoding.Default.GetBytes(message);
+                    stream.Write(sendMessage, 0, sendMessage.Length);
+
                     streamList.Add(stream);
-
-                    int length;
-                    string entryMessage = null;
-                    byte[] messageBuffer = new byte[256];
-                    //입장 메시지 못받았을 때 return 0
-                    if ((length = stream.Read(messageBuffer, 0, messageBuffer.Length)) == 0)
-                    {
-                        Console.WriteLine("Can't receive entry message from a client");
-                    }
-                    //받았을 때 
-                    entryMessage = Encoding.Default.GetString(messageBuffer, 0, length);
-                    Console.WriteLine("수신 {0}", entryMessage);
-
-                    string[] splitMessage = entryMessage.Split(new string[] { "/" }, StringSplitOptions.None);
-                    //1/1번라인 이런식으로 메시지가 온다
-                    int.TryParse(splitMessage[0], out int protocol);
-
-                    if (protocol == 1)
-                    {
-                        Console.WriteLine("Protocol do match");
-                        lineNameAndStream[splitMessage[1]] = stream;
-                    }
-                    else
-                        Console.WriteLine("Protocol does not match");
-
+                    
                     secondLock = false;
 
                     Monitor.Pulse(firstLock);
                 }
-                break;
             }
-            
-
-
         }
         
 
@@ -152,12 +183,11 @@ namespace ProjectServer
 
                 server.Start();
 
-                Console.WriteLine("Information : Woong Server has been just opened");
-                MessageBox.Show("들어왔다.");
+                MessageBox.Show("Woong server has just been connected");
             }
             catch (SocketException a)
             {
-                Console.WriteLine(a);
+                MessageBox.Show("{0}", a.ToString());
                 server.Stop();
             }
         }
@@ -165,6 +195,20 @@ namespace ProjectServer
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void Btn_EMC(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private int i = 0;
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+        
+            passItems.Add(new PassData() { Item = "asasd", Time = "dsadsa", Line = "dsadwq", Director = "gdasfe", Note = "gdfsa" });
+            PassList.Items.Insert(i, passItems);
+            i += 1;
         }
     }
 
@@ -174,24 +218,22 @@ namespace ProjectServer
         public ControlPage()
         {
             InitializeComponent();
+
+;
         }
 
 
         private void Btn_Sopen(object sender, RoutedEventArgs e)
         {
             ServerInit();
-            MessageBox.Show("가보자");
+            MessageBox.Show("Thread starts");
             Thread t1 = new Thread(new ThreadStart(HandleEntranceOfClients));
-            Thread t2 = new Thread(new ParameterizedThreadStart(HandleDataFromClients));
+            Thread t2 = new Thread(new ThreadStart(HandleDataFromClients));
             t1.Start();
             t2.Start();
+            
 
         }
-
-        //private void aaaaa()
-        //{
-        //    HandleDataFromClients(streamList[0]);
-        //}
 
 
         private void Btn_Sclose(object sender, RoutedEventArgs e)
@@ -199,4 +241,9 @@ namespace ProjectServer
             server.Stop();
         }
     }
+
+
+
 }
+
+
