@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectServer"
         mc:Ignorable="d"
-        Title="" Height="560" Width="800">
+        Title=""  
+        Height="750"
+        Width="950" >
     <Grid>
         <Frame Source="/MainPage.xaml" NavigationUIVisibility="Hidden"></Frame>
     </Grid>

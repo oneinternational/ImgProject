@@ -23,6 +23,8 @@ namespace ProjectServer
         public Page1()
         {
             InitializeComponent();
+
+
         }
 
         private void Access_Clicked(object sender, RoutedEventArgs e)

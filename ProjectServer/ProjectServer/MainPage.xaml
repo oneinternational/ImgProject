@@ -5,39 +5,49 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ProjectServer"
       mc:Ignorable="d" 
-      Title="" Height="560" Width="800">
-    <Grid Background="White">
+      Title="Log In" Height="700" Width="900">
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                <GradientStop Color="#FF3C005D" Offset="1"/>
+                <GradientStop Color="#FFA961D3"/>
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="6*"/>
             <ColumnDefinition Width="21*"/>
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
-        <Image Source="C:\Users\Sangho\source\repos\ServerApp\gear.png" Margin="12,0,-95,0" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="2" Grid.Column="1" >
+        <Image Source="C:\Users\Sangho\source\repos\ServerApp\gear2.png" Margin="43,210,430,325" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="2" >
             <Image.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
                     <SkewTransform AngleY="0.092"/>
-                    <RotateTransform/>
+                    <RotateTransform Angle="394.399"/>
                     <TranslateTransform Y="0.668"/>
                 </TransformGroup>
             </Image.RenderTransform>
         </Image>
+        <Ellipse Grid.Column="1" Margin="569,540,10.625,10" Stroke="White" StrokeThickness="5" Grid.ColumnSpan="2"/>
+        <Ellipse Width="1000" Height="1000" Stroke="White" StrokeThickness="5" Margin="46,-580,-315,280" Grid.ColumnSpan="2" Grid.Column="1" Opacity="0.2"/>
+        <Ellipse Width="500" Height="500" Stroke="White" StrokeThickness="5" Margin="-20,140,279.375,60" Grid.ColumnSpan="2" Opacity="0.2"/>
+        <Ellipse Width="800" Height="800" Stroke="White" StrokeThickness="5" Margin="162,256,-231,-356" Grid.ColumnSpan="2" Opacity="0.2" Grid.Column="1"/>
 
-        <Label Content="Woong Parts Inc." HorizontalAlignment="Left" Margin="338,501,0,0" VerticalAlignment="Top" Width="312" Height="59" FontSize="36" FontStyle="Italic" FontWeight="Bold" Grid.ColumnSpan="2" Grid.Column="1"/>
-        <Label Content="Administrator" Margin="70,10,0,0" VerticalAlignment="Top" Width="330" Height="80" FontSize="48" FontWeight="Bold" HorizontalAlignment="Left" Grid.Column="1"/>
-        <WrapPanel Margin="55,260,347,224" Grid.ColumnSpan="2">
-            <Label FontSize="20" Height="45" FontWeight="Bold">Password</Label>
-            <PasswordBox x:Name="PBox" MaxLength="6" PasswordChar="*" Width="155" FontSize="36" Height="36"/>
+        <Label Content="B.H" HorizontalAlignment="Left" Margin="10,561,0,0" VerticalAlignment="Top" Width="96" Height="65" FontSize="40" FontStyle="Italic" FontWeight="Bold" Grid.Column="2" Foreground="#FFD7D7DE" FontFamily="Nirmala UI"/>
+        <Label Content="STEEL inc." HorizontalAlignment="Left" Margin="579,618,0,0" VerticalAlignment="Top" Width="137" Height="40" FontSize="25" FontStyle="Italic" FontWeight="Bold" Grid.Column="1" Foreground="#FFCCCCD8" FontFamily="Nirmala UI" RenderTransformOrigin="0.127,0.357" Grid.ColumnSpan="2"/>
+        <Label Content="Administrator" Margin="115,55,0,0" VerticalAlignment="Top" Width="360" Height="80" FontSize="48" FontWeight="Bold" HorizontalAlignment="Left" Grid.Column="1" Foreground="#FF430270" FontFamily="Microsoft YaHei"/>
+        <WrapPanel Margin="75,320,190,330" Grid.Column="1">
+            <Label FontSize="30" Height="45" FontWeight="Bold" Content="Password" Foreground="White" VerticalAlignment="Top"/>
+            <PasswordBox x:Name="PBox" MaxLength="6" PasswordChar="*" Width="175" FontSize="36" Height="48"/>
         </WrapPanel>
-
-
-
-        <Button x:Name="Btn_Access" BorderBrush="Black" BorderThickness="1.5"  Content="Access" HorizontalAlignment="Left" Margin="140,365,0,0" VerticalAlignment="Top" Width="120" Height="35" FontSize="24" FontWeight="Bold" Click="Access_Clicked" Background="#FFF59595" Grid.ColumnSpan="2">
-
+        <Button x:Name="Btn_Access" BorderBrush="White" BorderThickness="3"  Content="Access" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" HorizontalAlignment="Left" Margin="405,320,0,0" VerticalAlignment="Top" Width="135" Height="50" FontSize="30" FontWeight="Bold" Click="Access_Clicked" Background="#FF75339B" Grid.Column="1" Foreground="#FFEEEEEE" >
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"></Setter>
+                </Style>
+            </Button.Resources>
         </Button>
-
-        <Label Content="Welcome" HorizontalAlignment="Left" Margin="125,117,0,0" VerticalAlignment="Top" Width="170" FontSize="36" FontWeight="Bold" Grid.ColumnSpan="2"/>
-        <Label Content="※ Permisson only to the administrator ※" HorizontalAlignment="Left" Margin="21,190,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.923,-0.385" Width="369" FontWeight="Bold" FontSize="18" Grid.ColumnSpan="2">
+        <Label Content="※ Permisson only to the administrator ※" HorizontalAlignment="Left" Margin="85,120,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.923,-0.385" Width="410" FontWeight="Bold" FontSize="20" Height="45" Grid.Column="1" Foreground="#FFEEEEEE">
             <Label.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
